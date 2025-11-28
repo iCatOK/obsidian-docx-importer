@@ -1,0 +1,13 @@
+{
+  "id": "docx-importer",
+  "name": "DOCX Importer",
+  "version": "1.0.0",
+  "minAppVersion": "1.0.0",
+  "description": "Import DOCX documents as Markdown files with support for formulas, images, tables, and lists",
+  "author": "Your Name",
+  "authorUrl": "https://github.com/yourusername",
+  "isDesktopOnly": false,
+  "fundingUrl": {
+    "GitHub Sponsors": "https://github.com/sponsors/yourusername"
+  }
+}
