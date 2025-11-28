@@ -87,26 +87,38 @@ export class TableConverter {
         );
         if (imageMd) result += imageMd;
       } else if (run.type === 'run') {
-        result += this.convertRunContent(run);
+        result += await this.convertRunContent(run, context);
       }
     }
 
     return result;
   }
 
-  private convertRunContent(run: DocxElement): string {
+  private async convertRunContent(run: DocxElement, context: ConversionContext): Promise<string> {
     const children = run.children || [];
-    let text = '';
+    const segments: string[] = [];
 
     for (const child of children) {
       if (child.type === 'text') {
-        text += child.content || '';
+        segments.push(child.content || '');
       } else if (child.type === 'break') {
-        text += '<br>';
+        segments.push('<br>');
       } else if (child.type === 'tab') {
-        text += '    ';
+        segments.push('    ');
+      } else if (child.type === 'image') {
+        // handle images inside a run
+        const imageMd = await this.imageConverter.saveImage(
+          child.properties?.imageId || '',
+          context
+        );
+        if (imageMd) segments.push(imageMd);
+      } else if (child.type === 'formula') {
+        const latex = this.formulaConverter.convert(child.properties?.omml || '');
+        segments.push(`$${latex}$`);
       }
     }
+
+    let text = segments.join('');
 
     // Apply formatting
     const props = run.properties || {};
